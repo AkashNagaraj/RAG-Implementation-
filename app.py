@@ -50,12 +50,12 @@ async def TTS(request: Request):
 async def validator(request: Request):
     try:
         body = await request.json()
-        question = body["question"]
-        if "context" in body:
-            context = body["context"]
-            response =  question_validator(ollama_model, question, context)
+        question = body["query"]
+        valid = question_validator(ollama_model, question)
+        if valid=="yes":
+            response = main_rag(ollama_model, question)
         else:
-            response = question_validator(ollama_model, question)
+            response = "Not a valid question"
         return {"output":response}
     except Exception as e:
         print(f"Error: {e}")

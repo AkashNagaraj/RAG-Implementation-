@@ -14,12 +14,6 @@ def chunk_data():
     num_pages = len(reader.pages)
     pdf_text = "\n".join([reader.pages[i].extract_text() for i in range(0,num_pages)])
     
-    """
-    pdf_text = [val for val in pdf_text.split("\n") if val]
-    chunk_size = 10 # Take 10 sentences for one chunk
-    chunk_text = [" ".join(pdf_text[i:i+chunk_size]) for i in range(0,len(pdf_text)-chunk_size,chunk_size)]
-    """
-    
     chunk_size = 1000
     overlap = 200 
     text_splitter = RecursiveCharacterTextSplitter(
@@ -43,14 +37,14 @@ def store_DB(text_content, ids):
 
 
 def query_chroma(collection, input_text):
-    top_k = 5
+    top_k = 3
     results = collection.query(query_texts=[input_text], n_results = top_k)
     required_output = " ".join(results["documents"][0])
     return required_output
 
 
 def summarizer(model, text):
-    result = model.invoke("Generate a summary for this : " + text)
+    result = model.invoke("Generate a concise summary for this : " + text)
     return result
 
 
