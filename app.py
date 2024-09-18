@@ -6,7 +6,7 @@ import json
 from RAG_system import main_rag 
 from Smart_Agent import question_validator
 from text_to_speech import main_TTS
-
+from main_chat import run_chat
 
 app = FastAPI()
 
@@ -20,6 +20,19 @@ app.add_middleware(
 )
 
 ollama_model = Ollama(model="llama3.1")
+
+
+@app.post("/api/chat")
+async def chatting(request: Request):
+    try:
+        body = await request.json()
+        query = body["query"]
+        response = run_chat(ollama_model, query)
+        return {"output":response}
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
 @app.post("/api/TTS")
 async def TTS(request: Request):
